@@ -3,15 +3,16 @@ local M = {}
 function M.get_icon_state()
   local show_icons = vim.g.nvim_tree_show_icons or { git = 1, folders = 1, files = 1 }
   local icons = {
-    default = "",
-    symlink = "",
+    root = "",
+    default = "﬒",
+    symlink = "",
     git_icons = {
       unstaged = "✗",
       staged = "✓",
-      unmerged = "",
+      unmerged = "═",
       renamed = "➜",
       untracked = "★",
-      deleted = ""
+      deleted = "✖"
     },
     folder_icons = {
       default = "",

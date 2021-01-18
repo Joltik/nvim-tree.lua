@@ -3,6 +3,7 @@ local utils = require'lib.utils'
 
 local api = vim.api
 
+local first_space = " "
 local lines = {}
 local hl = {}
 local index = 0
@@ -25,7 +26,7 @@ if icon_state.show_folder_icon then
     else
       n = icon_state.icons.folder_icons.default
     end
-    return n.." "
+    return first_space..n.." "
   end
   set_folder_hl = function(line, depth, icon_len, name_len, hl_group)
     table.insert(hl, {hl_group, line, depth+icon_len, depth+icon_len+name_len})
@@ -44,9 +45,9 @@ if icon_state.show_file_icon then
       if hl_group then
         table.insert(hl, { hl_group, line, depth, depth + #icon + 1 })
       end
-      return icon.." "
+      return first_space..icon.." "
     else
-      return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
+      return #icon_state.icons.default > 0 and first_space..icon_state.icons.default.." " or ""
     end
   end
 
@@ -55,14 +56,14 @@ end
 local get_symlink_icon = function() return icon_state.icons.symlink end
 if icon_state.show_file_icon then
   get_symlink_icon = function()
-    return #icon_state.icons.symlink > 0 and icon_state.icons.symlink.." " or ""
+    return #icon_state.icons.symlink > 0 and first_space..icon_state.icons.symlink.." " or ""
   end
 end
 
 local get_special_icon = function() return icon_state.icons.default end
 if icon_state.show_file_icon then
   get_special_icon = function()
-    return #icon_state.icons.default > 0 and icon_state.icons.default.." " or ""
+    return #icon_state.icons.default > 0 and first_space..icon_state.icons.default.." " or ""
   end
 end
 
@@ -154,7 +155,7 @@ if icon_state.show_git_icon then
     local git_status = node.git_status
     if not git_status then return "" end
 
-    local icon = ""
+    local icon = " "
     local icons = git_icon_state[git_status]
     if not icons then
       if vim.g.nvim_tree_git_hl ~= 1 then
@@ -213,8 +214,8 @@ local root_folder_modifier = vim.g.nvim_tree_root_folder_modifier or ':~'
 
 local function update_draw_data(tree, depth, markers)
   if tree.cwd and tree.cwd ~= '/' then
-    local root_name = vim.fn.fnamemodify(tree.cwd, root_folder_modifier):gsub('/$', '').."/.."
-    table.insert(lines, root_name)
+    local root_name = icon_state.icons.root.." [FILE] "..vim.fn.fnamemodify(tree.cwd, root_folder_modifier):gsub('/$', ''):gsub('^([^S]*)/', '')
+    table.insert(lines, string.upper(root_name))
     table.insert(hl, {'NvimTreeRootFolder', index, 0, string.len(root_name)})
     index = 1
   end
